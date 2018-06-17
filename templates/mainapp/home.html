@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+  <head>
+    <title>Portal Pracy</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!--<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" /> -->
+
+      <style>
+          .jumbotron{
+              background-color: white;
+              color: gray();
+          }
+          .navbar-brand {
+              background-color: gray();
+              color: orange;
+          }
+          ul{
+              list-style-type: none;
+              margin-top: 20px;
+          }
+          .searchfield {
+            width: 500px;
+        }
+      </style>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="{% url 'index' %}">Portal Pracy</a>
+            <a class="navbar-brand" href="{% url 'home' %}">Oferty</a>
+            {% if user.is_authenticated %}
+                 <a class="navbar-brand" href="{% url 'newoffer' %}">Dodaj ofertę</a>
+            {% endif %}
+        </div>
+            <ul class="nav navbar-nav navbar-right">
+                {% if user.is_authenticated %}
+                    <a class="navbar-brand" href="{% url 'logout' %}?next={{request.path}}">Wyloguj się: {{ user.get_username }}</a>
+                    <a class="navbar-brand" href="{% url 'offer_list_by_employer' user.employer.pk %}">Profil</a>
+                {% else %}
+                    <a class="navbar-brand" href="{% url 'login' %}?next={{request.path}}">Zaloguj się</a>
+                {% endif %}
+            </ul>
+    </div>
+</div>
+    <div class="jumbotron">
+         <div class="container">
+            <h1>Oferty pracy</h1>
+            <div clas="container" align="center">
+                 <form id="searchform" action="{% url 'offer_search_list_view' %}" method="get" accept-charset="utf-8">
+                     <input class="searchfield" id="searchbox" name="q" type="text" placeholder="Wyszukaj interesującą Cię branżę lub stanowisko">
+                     <!--<button class="btn btn-warning btn-md" type="submit">Szukaj</button>-->
+                     <button type="submit" class="btn btn-warning btn-md">
+                         <span class="glyphicon glyphicon-search"></span> Szukaj
+                     </button>
+                 </form>
+            </div>
+            {% if object_list %}
+            <ul>
+                {% for Offer in  object_list %}
+                <li>
+                    <a href="{% url 'offer' Offer.pk %}" class="btn btn-warning btn-lg btn-block">{{Offer}}</a>
+                    <br>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+                <a class="btn btn-warning btn-lg btn-block">Brak ofert do wyświetlenia</a>
+            {% endif %}
+         </div>
+    </div>
+  </body>
+</html>
